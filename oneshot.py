@@ -1195,7 +1195,8 @@ if __name__ == '__main__':
                         companion.smart_bruteforce(args.bssid, args.pin, args.delay)
                     else:
                         companion.single_connection(args.bssid, args.pin, args.pixie_dust,
-                                                    args.show_pixie_cmd, args.pixie_force)
+                                                    args.pbc, args.show_pixie_cmd,
+                                                    args.pixie_force)
             if not args.loop:
                 break
             else:
