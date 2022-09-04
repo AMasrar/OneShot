@@ -14,6 +14,7 @@ from datetime import datetime
 import collections
 import statistics
 import csv
+from pathlib import Path
 from typing import Dict
 
 
@@ -452,6 +453,7 @@ class Companion:
         inmsg = b.decode('utf-8', errors='replace')
         return inmsg
 
+    @staticmethod
     def _explain_wpas_not_ok_status(command: str, respond: str):
         if command.startswith(('WPS_REG', 'WPS_PBC')):
             if respond == 'UNKNOWN COMMAND':
@@ -1069,6 +1071,8 @@ Advanced arguments:
     --iface-down             : Down network interface when the work is finished
     -l, --loop               : Run in a loop
     -r, --reverse-scan       : Reverse order of networks in the list of networks. Useful on small displays
+    --mtk-wifi               : Activate MediaTek Wi-Fi interface driver on startup and deactivate it on exit
+                               (for internal Wi-Fi adapters implemented in MediaTek SoCs). Turn off Wi-Fi in the system settings before using this.
     -v, --verbose            : Verbose output
 
 Example:
@@ -1157,6 +1161,13 @@ if __name__ == '__main__':
         help='Reverse order of networks in the list of networks. Useful on small displays'
     )
     parser.add_argument(
+        '--mtk-wifi',
+        action='store_true',
+        help='Activate MediaTek Wi-Fi interface driver on startup and deactivate it on exit '
+             '(for internal Wi-Fi adapters implemented in MediaTek SoCs). '
+             'Turn off Wi-Fi in the system settings before using this.'
+    )
+    parser.add_argument(
         '-v', '--verbose',
         action='store_true',
         help='Verbose output'
@@ -1168,6 +1179,14 @@ if __name__ == '__main__':
         die("The program requires Python 3.6 and above")
     if os.getuid() != 0:
         die("Run it as root")
+
+    if args.mtk_wifi:
+        wmtWifi_device = Path("/dev/wmtWifi")
+        if not wmtWifi_device.is_char_device():
+            die("Unable to activate MediaTek Wi-Fi interface device (--mtk-wifi): "
+                "/dev/wmtWifi does not exist or it is not a character device")
+        wmtWifi_device.chmod(0o644)
+        wmtWifi_device.write_text("1")
 
     if not ifaceUp(args.interface):
         die('Unable to up interface "{}"'.format(args.interface))
@@ -1214,3 +1233,6 @@ if __name__ == '__main__':
 
     if args.iface_down:
         ifaceUp(args.interface, down=True)
+
+    if args.mtk_wifi:
+        wmtWifi_device.write_text("0")
