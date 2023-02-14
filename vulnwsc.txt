@@ -1,6 +1,7 @@
 ADSL RT2860
 AIR3G WSC Wireless Access Point AIR3G WSC Device
 AirLive Wireless Gigabit AP AirLive Wireless Gigabit AP
+APxx APxx-xxx
 Archer_A9 1.0
 Archer A2 5.0
 Archer A5 4.0
@@ -41,6 +42,7 @@ Home Internet Center Keenetic series
 Huawei Wireless Access Point RT2860
 JWNR2000v2(Wireless AP) JWNR2000v2
 Keenetic Keenetic series
+Linksys E5400 E5400
 Linksys Wireless Access Point EA7500
 Linksys Wireless Router WRT110
 NBG-419N NBG-419N
