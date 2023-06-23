@@ -52,6 +52,7 @@ Huawei Wireless Access Point RT2860
 JWNR2000v2(Wireless AP) JWNR2000v2
 Keenetic Keenetic series
 Linksys E5400 E5400
+Linksys Wireless Access Point E5600
 Linksys Wireless Access Point EA7500
 Linksys Wireless Router WRT110
 NBG-419N NBG-419N
@@ -60,6 +61,7 @@ NETGEAR Wireless Access Point NETGEAR
 NETGEAR Wireless Access Point R6220
 NETGEAR Wireless Access Point R6260
 N/A EV-2010-09-20
+Ralink Wireless Access Point E5600
 Ralink Wireless Access Point RT2860
 Ralink Wireless Access Point WR-AC1210
 RTL8196E
