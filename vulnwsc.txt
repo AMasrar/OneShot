@@ -64,6 +64,7 @@ N/A EV-2010-09-20
 Ralink Wireless Access Point E5600
 Ralink Wireless Access Point RT2860
 Ralink Wireless Access Point WR-AC1210
+RE4000W RE4000W
 RTL8196E
 RTL8xxx EV-2009-02-06
 RTL8xxx EV-2010-09-20
