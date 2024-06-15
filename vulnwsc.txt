@@ -41,13 +41,11 @@ D-Link Router DIR-615H1
 D-Link Router DIR-655
 D-Link Router DIR-809
 D-Link Router GO-RT-N150
-Deco E4S 1.0
 Edimax Edimax
 EC120-F5 1.0
 EC220-G5 2.0
 EV-2009-02-06
 Enhanced Wireless Router F6D4230-4 v1
-GPON ONT GPON ONT
 Home Internet Center KEENETIC series
 Home Internet Center Keenetic series
 Huawei Wireless Access Point RT2860
@@ -164,8 +162,6 @@ WPS Router RT-N65U
 WPS Router RT-N300
 WR5570 2011-05-13
 XC220-G3v 1.0
-XC220-G3v 13.0
-XN020-G3 2.20
 XN020-G3v 1.0
 ZyXEL NBG-416N AP Router
 ZyXEL NBG-416N AP Router NBG-416N
