@@ -15,7 +15,13 @@ import collections
 import statistics
 import csv
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional, Tuple
+
+try:
+    from wifi_qrcode_generator.generator import wifi_qrcode
+    qr_available = True
+except ModuleNotFoundError:
+    qr_available = False
 
 
 class NetworkAddress:
@@ -585,10 +591,8 @@ class Companion:
                     return pin
         return False
 
-    def __credentialPrint(self, wps_pin=None, wpa_psk=None, essid=None):
-        print(f"[+] WPS PIN: '{wps_pin}'")
-        print(f"[+] WPA PSK: '{wpa_psk}'")
-        print(f"[+] AP SSID: '{essid}'")
+    def __credentialPrint(self, wps_pin=None, wpa_psk=None, essid=None, qr=True):
+        credentialPrint(wps_pin, wpa_psk, essid, qr)
 
     def __saveResult(self, bssid, essid, wps_pin, wpa_psk):
         if not os.path.exists(self.reports_dir):
@@ -680,7 +684,7 @@ class Companion:
         return False
 
     def single_connection(self, bssid=None, pin=None, pixiemode=False, pbc_mode=False, showpixiecmd=False,
-                          pixieforce=False, store_pin_on_fail=False):
+                          pixieforce=False, store_pin_on_fail=False, qr_code=False):
         if not pin:
             if pixiemode:
                 try:
@@ -712,7 +716,7 @@ class Companion:
             self.__wps_connection(bssid, pin, pixiemode)
 
         if self.connection_status.status == 'GOT_PSK':
-            self.__credentialPrint(pin, self.connection_status.wpa_psk, self.connection_status.essid)
+            self.__credentialPrint(pin, self.connection_status.wpa_psk, self.connection_status.essid, qr_code)
             if self.save_result:
                 self.__saveResult(bssid, self.connection_status.essid, pin, self.connection_status.wpa_psk)
             if not pbc_mode:
@@ -727,7 +731,7 @@ class Companion:
             if self.pixie_creds.got_all():
                 pin = self.__runPixiewps(showpixiecmd, pixieforce)
                 if pin:
-                    return self.single_connection(bssid, pin, pixiemode=False, store_pin_on_fail=True)
+                    return self.single_connection(bssid, pin, pixiemode=False, store_pin_on_fail=True, qr_code=qr_code)
                 return False
             else:
                 print('[!] Not enough data to run Pixie Dust attack')
@@ -850,6 +854,23 @@ class WiFiScanner:
                     )
         except FileNotFoundError:
             self.stored = []
+
+    def stored_network(self, BSSID) -> Dict[str, str]:
+        reports_fname = os.path.dirname(os.path.realpath(__file__)) + '/reports/stored.csv'
+        try:
+            with open(reports_fname, 'r', newline='', encoding='utf-8', errors='replace') as file:
+                csvReader = csv.reader(file, delimiter=';', quoting=csv.QUOTE_ALL)
+                # Skip header
+                next(csvReader)
+                for row in csvReader:
+                    if BSSID in row:
+                        return {"DATE": row[0],
+                                "BSSID": row[1],
+                                "ESSID": row[2],
+                                "PIN": row[3],
+                                "WPA": row[4]}
+        except FileNotFoundError:
+            return {}
 
     def iw_scanner(self) -> Dict[int, dict]:
         """Parsing iw scan results"""
@@ -1015,22 +1036,47 @@ class WiFiScanner:
 
         return network_list
 
-    def prompt_network(self) -> str:
+    def prompt_network(self, qr_code=False, pin=None) -> Tuple[Optional[str], Optional[str]]:
         networks = self.iw_scanner()
         if not networks:
             print('[-] No WPS networks found.')
-            return
+            return None, pin
         while 1:
             try:
                 networkNo = input('Select target (press Enter to refresh): ')
                 if networkNo.lower() in ('r', '0', ''):
-                    return self.prompt_network()
+                    return self.prompt_network(qr_code, pin)
                 elif int(networkNo) in networks.keys():
-                    return networks[int(networkNo)]['BSSID']
+                    # check if network already has a saved password
+                    networkSelected = networks[int(networkNo)]
+                    if (networkSelected['BSSID'], networkSelected['ESSID']) in self.stored:
+                        networkSaved = self.stored_network(networkSelected['BSSID'])
+                        if not input('[?] Display previously found password? [n/Y] ').lower() == 'n':
+                            credentialPrint(networkSaved['PIN'], networkSaved['WPA'], networkSaved['ESSID'], qr=qr_code)
+                        elif not pin and not input('[?] Use previously calculated PIN {}? [n/Y] ').lower() == 'n':
+                                pin = networkSaved['PIN']
+                    return networks[int(networkNo)]['BSSID'], pin
                 else:
                     raise IndexError
-            except Exception:
+            except Exception as e:
+                print(e)
                 print('Invalid number')
+
+def credentialPrint(wps_pin=None, wpa_psk=None, essid=None, qr=True):
+    print(f"[+] WPS PIN: '{wps_pin}'")
+    print(f"[+] WPA PSK: '{wpa_psk}'")
+    print(f"[+] AP SSID: '{essid}'")
+
+    if qr:
+        if not qr_available:
+            print("Please install wifi_qrcode_generator library to generate qr codes "
+                  "(pip install wifi-qrcode-generator)")
+            return
+
+        qr_code = wifi_qrcode(
+            ssid=essid, hidden=False, authentication_type='WPA', password=wpa_psk
+        )
+        qr_code.print_ascii()
 
 
 def ifaceUp(iface, down=False):
@@ -1166,6 +1212,11 @@ if __name__ == '__main__':
         help='Reverse order of networks in the list of networks. Useful on small displays'
     )
     parser.add_argument(
+        '-q', '--qr-code',
+        action='store_true',
+        help='Display a QR code to connect easily to the network using other devices.'
+    )
+    parser.add_argument(
         '--mtk-wifi',
         action='store_true',
         help='Activate MediaTek Wi-Fi interface driver on startup and deactivate it on exit '
@@ -1200,7 +1251,7 @@ if __name__ == '__main__':
         try:
             companion = Companion(args.interface, args.write, print_debug=args.verbose)
             if args.pbc:
-                companion.single_connection(pbc_mode=True)
+                companion.single_connection(pbc_mode=True, qr_code=args.qr_code)
             else:
                 if not args.bssid:
                     try:
@@ -1211,7 +1262,7 @@ if __name__ == '__main__':
                     scanner = WiFiScanner(args.interface, vuln_list)
                     if not args.loop:
                         print('[*] BSSID not specified (--bssid) — scanning for available networks')
-                    args.bssid = scanner.prompt_network()
+                    args.bssid, args.pin = scanner.prompt_network(qr_code=args.qr_code, pin=args.pin)
 
                 if args.bssid:
                     companion = Companion(args.interface, args.write, print_debug=args.verbose)

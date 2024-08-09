@@ -11,6 +11,7 @@
  - [Wpa supplicant](https://www.w1.fi/wpa_supplicant/);
  - [Pixiewps](https://github.com/wiire-a/pixiewps);
  - [iw](https://wireless.wiki.kernel.org/en/users/documentation/iw).
+ - Optional [wifi-qrcode-generator](https://pypi.org/project/wifi-qrcode-generator/)
 # Setup
 ## Debian/Ubuntu
 **Installing requirements**
@@ -86,6 +87,10 @@ Please note that root access is required.
  pkg install -y root-repo
  pkg install -y git tsu python wpa-supplicant pixiewps iw openssl
  ```
+**Optional**
+```
+pip3 install wifi-qrcode-generator
+```
 **Getting OneShot**
  ```
  git clone --depth 1 https://github.com/drygdryg/OneShot OneShot
