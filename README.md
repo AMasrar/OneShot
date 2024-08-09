@@ -24,7 +24,7 @@
  ```
  sudo apt install -y pixiewps
  ```
- 
+
 ***Other versions***
  ```
  sudo apt install -y build-essential unzip
@@ -36,11 +36,11 @@
 **Getting OneShot**
  ```
  cd ~
- wget https://raw.githubusercontent.com/drygdryg/OneShot/master/oneshot.py
+ wget https://raw.githubusercontent.com/amasrar/OneShot/master/oneshot.py
  ```
 Optional: getting a list of vulnerable to pixie dust devices for highlighting in scan results:
  ```
- wget https://raw.githubusercontent.com/drygdryg/OneShot/master/vulnwsc.txt
+ wget https://raw.githubusercontent.com/amasrar/OneShot/master/vulnwsc.txt
  ```
 ## Arch Linux
 **Installing requirements**
@@ -49,16 +49,16 @@ Optional: getting a list of vulnerable to pixie dust devices for highlighting in
  ```
 **Getting OneShot**
  ```
- wget https://raw.githubusercontent.com/drygdryg/OneShot/master/oneshot.py
+ wget https://raw.githubusercontent.com/amasrar/OneShot/master/oneshot.py
  ```
 Optional: getting a list of vulnerable to pixie dust devices for highlighting in scan results:
  ```
- wget https://raw.githubusercontent.com/drygdryg/OneShot/master/vulnwsc.txt
+ wget https://raw.githubusercontent.com/amasrar/OneShot/master/vulnwsc.txt
  ```
 ## Alpine Linux
 It can also be used to run on Android devices using [Linux Deploy](https://play.google.com/store/apps/details?id=ru.meefik.linuxdeploy)
 
-**Installing requirements**  
+**Installing requirements**
 Adding the testing repository:
  ```
  sudo sh -c 'echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/repositories'
@@ -68,19 +68,19 @@ Adding the testing repository:
  ```
  **Getting OneShot**
  ```
- sudo wget https://raw.githubusercontent.com/drygdryg/OneShot/master/oneshot.py
+ sudo wget https://raw.githubusercontent.com/amasrar/OneShot/master/oneshot.py
  ```
 Optional: getting a list of vulnerable to pixie dust devices for highlighting in scan results:
  ```
- sudo wget https://raw.githubusercontent.com/drygdryg/OneShot/master/vulnwsc.txt
+ sudo wget https://raw.githubusercontent.com/amasrar/OneShot/master/vulnwsc.txt
  ```
 ## [Termux](https://termux.com/)
-Please note that root access is required.  
+Please note that root access is required.
 
 #### Using installer
- ```
- curl -sSf https://raw.githubusercontent.com/drygdryg/OneShot_Termux_installer/master/installer.sh | bash
- ```
+
+~~curl -sSf https://raw.githubusercontent.com/drygdryg/OneShot_Termux_installer/master/installer.sh | bash~~
+
 #### Manually
 **Installing requirements**
  ```
@@ -93,7 +93,7 @@ pip3 install wifi-qrcode-generator
 ```
 **Getting OneShot**
  ```
- git clone --depth 1 https://github.com/drygdryg/OneShot OneShot
+ git clone --depth 1 https://github.com/amasrar/OneShot OneShot
  ```
 #### Running
  ```
