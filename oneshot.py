@@ -1053,7 +1053,9 @@ class WiFiScanner:
                         networkSaved = self.stored_network(networkSelected['BSSID'])
                         if not input('[?] Display previously found password? [n/Y] ').lower() == 'n':
                             credentialPrint(networkSaved['PIN'], networkSaved['WPA'], networkSaved['ESSID'], qr=qr_code)
-                        elif not pin and not input('[?] Use previously calculated PIN {}? [n/Y] ').lower() == 'n':
+                            joinNetwork(networkSaved['ESSID'], networkSaved['ESSID'])
+                            return None, pin
+                        elif not pin and not input('[?] Use previously calculated PIN {}? [n/Y] '.format(networkSaved['PIN'])).lower() == 'n':
                                 pin = networkSaved['PIN']
                     return networks[int(networkNo)]['BSSID'], pin
                 else:
@@ -1271,7 +1273,7 @@ if __name__ == '__main__':
                     else:
                         companion.single_connection(args.bssid, args.pin, args.pixie_dust,
                                                     args.pbc, args.show_pixie_cmd,
-                                                    args.pixie_force)
+                                                    args.pixie_force, args.qr_code)
             if not args.loop:
                 break
             else:
